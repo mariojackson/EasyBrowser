@@ -11,6 +11,7 @@ import WebKit
 class ViewController: UIViewController, WKNavigationDelegate {
     var webView: WKWebView!
     var progressView: UIProgressView!
+    var websites = ["apple.com", "jackson.software"]
     
     override func loadView() {
         webView = WKWebView()
@@ -21,7 +22,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let url = URL(string: "https://jackson.software")!
+        let url = URL(string: "https://\(websites[0])")!
         webView.load(URLRequest(url: url))
         webView.allowsBackForwardNavigationGestures = true
         
@@ -42,8 +43,11 @@ class ViewController: UIViewController, WKNavigationDelegate {
     
     @objc func openTapped() {
         let alertController = UIAlertController(title: "Open page...", message: nil, preferredStyle: .actionSheet)
-        alertController.addAction(UIAlertAction(title: "apple.com", style: .default, handler: openPage))
-        alertController.addAction(UIAlertAction(title: "jackson.software", style: .default, handler: openPage))
+        
+        for website in websites {
+            alertController.addAction(UIAlertAction(title: website, style: .default, handler: openPage))
+        }
+        
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         alertController.popoverPresentationController?.barButtonItem = self.navigationItem.rightBarButtonItem
         present(alertController, animated: true)
@@ -51,6 +55,22 @@ class ViewController: UIViewController, WKNavigationDelegate {
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         title = webView.title
+    }
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        let url = navigationAction.request.url
+        
+        guard let host = url?.host else {
+            decisionHandler(.cancel)
+            return
+        }
+        
+        
+        for website in websites {
+            if host.contains(website) {
+                decisionHandler(.allow)
+            }
+        }
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
