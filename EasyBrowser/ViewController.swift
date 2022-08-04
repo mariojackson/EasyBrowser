@@ -11,7 +11,7 @@ import WebKit
 class ViewController: UIViewController, WKNavigationDelegate {
     var webView: WKWebView!
     var progressView: UIProgressView!
-    var websites = ["apple.com", "jackson.software"]
+    var allowedWebsites = ["apple.com", "jackson.software"]
     
     override func loadView() {
         webView = WKWebView()
@@ -22,7 +22,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let url = URL(string: "https://\(websites[0])")!
+        let url = URL(string: "https://\(allowedWebsites[0])")!
         webView.load(URLRequest(url: url))
         webView.allowsBackForwardNavigationGestures = true
         
@@ -44,8 +44,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
     @objc func openTapped() {
         let alertController = UIAlertController(title: "Open page...", message: nil, preferredStyle: .actionSheet)
         
-        for website in websites {
-            alertController.addAction(UIAlertAction(title: website, style: .default, handler: openPage))
+        for allowedWebsite in allowedWebsites {
+            alertController.addAction(UIAlertAction(title: allowedWebsite, style: .default, handler: openPage))
         }
         
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -65,9 +65,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
             return
         }
         
-        
-        for website in websites {
-            if host.contains(website) {
+        for allowedWebsite in allowedWebsites {
+            if host.contains(allowedWebsite) {
                 decisionHandler(.allow)
             }
         }
