@@ -83,6 +83,17 @@ class ViewController: UIViewController, WKNavigationDelegate {
             return
         }
         
+        if !allowedWebsites.contains(title) {
+            let alertController = UIAlertController(
+                title: "Blocked",
+                message: "Website not allowed",
+                preferredStyle: .alert
+            )
+            
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            present(alertController, animated: true)
+        }
+        
         if let url = URL(string: "https://" + title) {
             webView.load(URLRequest(url: url))
         }
